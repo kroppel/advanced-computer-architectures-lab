@@ -35,7 +35,7 @@ Compute the product of two matrices.
 
 My obtained speedup remained almost constant even for different matrix sizes.
 
-!["find2"](https://github.com/kroppel/advanced-computer-architectures-lab/blob/main/images/matmul.PNG)
+!["matmul"](https://github.com/kroppel/advanced-computer-architectures-lab/blob/main/images/matmul.PNG)
 
 ## RC4
 
