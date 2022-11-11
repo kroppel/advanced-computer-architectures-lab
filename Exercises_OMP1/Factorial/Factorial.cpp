@@ -17,6 +17,7 @@ int main() {
         factorial *= i;
     
     TM.stop();
+    double t_seq = TM.duration();
     TM.print("Sequential Factorial");
     std::cout << factorial << std::endl;
     
@@ -29,13 +30,17 @@ int main() {
     TM.start();
 
 
-#pragma omp parallel for reduction(* : parallelResult) num_threads(2)
+#pragma omp parallel for reduction(* : parallelResult) num_threads(24)
     for (int i = 1; i <= N; ++i) {
         parallelResult *= i;
     }
 
 
     TM.stop();
+    double t_par = TM.duration();
+
     TM.print("Parallel Factorial");
     std::cout << parallelResult << std::endl;
+
+    std::cout << "Speedup: " << t_seq/t_par << std::endl;
 }
