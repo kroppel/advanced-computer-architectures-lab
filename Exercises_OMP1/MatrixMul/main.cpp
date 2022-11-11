@@ -50,6 +50,7 @@ int main() {
     sequentialMatrixMatrixMul(A, B, C_seq);
 
     TM.stop();
+    double t_seq = TM.duration();
     std::cout << "done!" << std::endl<< std::endl;
     TM.print("Sequential Matrix-Matrix Multiplication");
 
@@ -62,10 +63,12 @@ int main() {
     openmpMatrixMatrixMul(A, B, C_par);
 
     TM.stop();
+    double t_par = TM.duration();
+
     std::cout << "done!" << std::endl<< std::endl;
     TM.print("OpenMP Matrix-Matrix Multiplication");
 
-    double t2 = TM.duration();
+    std::cout << "Speedup: " << t_seq/t_par << std::endl;
     
     // =========================================================================
     // ----------------- Check the results (C_seq = C_par) ----------------------
