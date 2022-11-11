@@ -106,6 +106,7 @@ int main() {
     }
 
     TM.stop();
+    double t_seq = TM.duration();
 
     std::cout << "Duration Single-threaded: " << TM.duration() << " ms.\n";
 
@@ -120,7 +121,7 @@ int main() {
 
     std::fill(key, key + key_length, 0);
 
-#pragma omp parallel for schedule(static) num_threads(3) shared(key_found, key_length) private(S, stream) firstprivate(key)
+#pragma omp parallel for schedule(static) num_threads(24) //shared(key_found, key_length) private(S, stream) firstprivate(key)
     for (int k = 0; k < (1<<24); ++k) {
         if (key_found) {
             continue;
@@ -145,8 +146,12 @@ int main() {
     }
 
     TM.stop();
+    double t_par = TM.duration();
 
     std::cout << "Duration Multi-threaded: " << TM.duration() << " ms.\n";
+
+    std::cout << "Speedup: " << t_seq/t_par << std::endl;
+
 
     if (not key_found) {
         std::cout << "\nERROR!! key not found\n\n";

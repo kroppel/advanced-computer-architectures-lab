@@ -33,6 +33,7 @@ int main() {
     }
 
     TM.stop();
+    double t_seq = TM.duration();
     TM.print("Sequential Search");
     std::cout << index << std::endl;
 
@@ -42,7 +43,7 @@ int main() {
     index = -1;
     bool is_found = false;
 
-#pragma omp parallel for num_threads(4) shared(is_found)
+#pragma omp parallel for num_threads(24) shared(is_found)
     for (int i = 0; i < N - 1; ++i) {
         if (is_found) {
             continue;
@@ -54,6 +55,11 @@ int main() {
     }
 
     TM.stop();
+    double t_par = TM.duration();
+
     TM.print("Parallel Search");
     std::cout << index << std::endl;
+
+    std::cout << "Speedup: " << t_seq/t_par << std::endl;
+
 }
