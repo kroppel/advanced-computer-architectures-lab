@@ -6,4 +6,4 @@ in the respective README.md of the directory.
 
 My specs:
 
-!["specs"](imagesspecs.PNG)
+!["specs"](https://github.com/kroppel/advanced-computer-architectures-lab/blob/main/images/specs.PNG)
