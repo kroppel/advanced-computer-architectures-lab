@@ -1,4 +1,6 @@
-# advanced-computer-architectures-lab
+# Advanced Computer Architectures Lab
+This repository contains all code written for the course
+'Advanced Computer Architectures', University of Verona, 2022
 
 Each assignment can be found in its dedicated directory.
 Performance measurements, output or notes are included
