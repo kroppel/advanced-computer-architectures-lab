@@ -7,6 +7,9 @@
 #include <unistd.h>
 #include "Timer.hpp"
 
+const int bitLength  = 24;
+const int key_length = bitLength / 8;
+
 void key_scheduling_alg(unsigned char*       S,
                         const unsigned char* key,
                         const int            key_length) {
@@ -47,7 +50,7 @@ void print_hex(const unsigned char* text, const int length, const char* str) {
     std::cout <<  std::dec << std::endl;
 }
 
-void RC4_ST() {
+double RC4_ST() {
     unsigned char S[256],
     stream[key_length],
     key[key_length]         = {'K','e','y'},
@@ -76,6 +79,7 @@ void RC4_ST() {
 
     // --------------------- CRACKING Single-Threaded------------------------------------------
 
+    bool key_found = false;
     timer::Timer<timer::HOST> TM;
     TM.start();
 
@@ -90,6 +94,7 @@ void RC4_ST() {
 
         if (chech_hex(cipher_text, stream, key_length)) {
             std::cout << " <> CORRECT\n\n";
+            key_found = true;
             break;
         }
         int next = 0;
@@ -101,21 +106,23 @@ void RC4_ST() {
     }
 
     TM.stop();
-    double t_seq = TM.duration();
 
     std::cout << "Duration Single-threaded: " << TM.duration() << " ms.\n";
 
     if (not key_found) {
         std::cout << "\nERROR!! key not found\n\n";
     }
+
+    return TM.duration();
 }
 
-void RC4_MT() {
+double RC4_MT() {
+    const unsigned char Plaintext[key_length] = {'j','j','j'},
+        cipher_text[key_length] = {0xB, 0xC7, 0x85};
+
     unsigned char S[256],
-    stream[key_length],
-    key[key_length]         = {'K','e','y'},
-    Plaintext[key_length]   = {'j','j','j'},
-    cipher_text[key_length] = {0xB, 0xC7, 0x85};
+        stream[key_length],
+        key[key_length] = {'K','e','y'};
 
     print_hex(Plaintext, key_length, "Plaintext:");
     print_hex(cipher_text, key_length, "cipher_text:");
@@ -146,50 +153,53 @@ void RC4_MT() {
 
     std::fill(key, key + key_length, 0);
 
-#pragma omp parallel for schedule(dynamic) num_threads(1) shared(key_found, key_length) private(S, stream) firstprivate(key)
-    for (int k = 0; k < (1<<24); ++k) {
-        if (key_found) {
-            continue;
-        }
-        std::cout << k;
+#pragma omp parallel num_threads(24) 
+{
+    #pragma omp master 
+    {
+        for (int k = 0; k < (1<<24); ++k) {
+            if (key_found) {
+                continue;
+            }
 
-        key_scheduling_alg(S, key, key_length);
-        pseudo_random_gen(S, stream, key_length);
+            key_scheduling_alg(S, key, key_length);
+            pseudo_random_gen(S, stream, key_length);
 
-        for (int i = 0; i < key_length; ++i)
-            stream[i] = stream[i] ^ Plaintext[i];        // XOR
+            #pragma omp task firstprivate(stream) 
+            {
+                for (int i = 0; i < key_length; ++i)
+                    stream[i] = stream[i] ^ Plaintext[i];        // XOR
 
-        if (chech_hex(cipher_text, stream, key_length)) {
-            std::cout << " <> CORRECT\n\n";
-            key_found = true;
+                if (chech_hex(cipher_text, stream, key_length)) {
+                    std::cout << " <> CORRECT\n\n";
+                    key_found = true;
+                    #pragma omp flush(key_found)
+                }
+            }
+            int next = 0;
+            while (key[next] == 255) {
+                key[next] = 0;
+                ++next;
+            }
+            ++key[next];
         }
-        int next = 0;
-        while (key[next] == 255) {
-            key[next] = 0;
-            ++next;
-        }
-        ++key[next];
     }
+}
 
     TM.stop();
-    double t_par = TM.duration();
 
     std::cout << "Duration Multi-threaded: " << TM.duration() << " ms.\n";
-
-    std::cout << "Speedup: " << t_seq/t_par << std::endl;
-
 
     if (not key_found) {
         std::cout << "\nERROR!! key not found\n\n";
     }
 
-    return 0;
+    return TM.duration();
 }
 
-const int bitLength  = 24;
-const int key_length = bitLength / 8;
-
 int main() {
-    RC4_ST();
-    RC4_MT();
+    double t_seq = RC4_ST();
+    double t_par = RC4_MT();
+
+    std::cout << "Speedup: " << t_seq/t_par << std::endl;
 }
