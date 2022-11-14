@@ -7,6 +7,9 @@
 #include <unistd.h>
 #include "Timer.hpp"
 
+const int bitLength  = 24;
+const int key_length = bitLength / 8;
+
 void key_scheduling_alg(unsigned char*       S,
                         const unsigned char* key,
                         const int            key_length) {
@@ -185,9 +188,6 @@ void RC4_MT() {
 
     return 0;
 }
-
-const int bitLength  = 24;
-const int key_length = bitLength / 8;
 
 int main() {
     RC4_ST();
