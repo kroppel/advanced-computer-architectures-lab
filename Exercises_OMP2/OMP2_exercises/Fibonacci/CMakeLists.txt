@@ -1,4 +1,4 @@
-set(PROJECT "Sections")
+set(PROJECT "Fibonacci")
 project(${PROJECT} CXX)
 
 cmake_minimum_required(VERSION 3.5)
@@ -17,8 +17,8 @@ else()
     message(FATAL_ERROR "Compiler ${CMAKE_CXX_COMPILER} has no C++14 support.")
 endif()
 
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 
-add_executable(sections ${PROJECT_SOURCE_DIR}/Sections.cpp)
+add_executable(fibonacci ${PROJECT_SOURCE_DIR}/Fibonacci.cpp)
