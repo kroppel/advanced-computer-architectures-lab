@@ -1,5 +1,6 @@
 #!/bin/bash
 DIR=`dirname $0`
 
-g++-9 -std=c++11 -fopenmp "$DIR"/Fibonacci.cpp -o fibonacci
+g++ -std=c++11 -fopenmp -I"$DIR"/include "$DIR"/Fibonacci.cpp -o build/fibonacci
+./build/fibonacci
 
