@@ -8,11 +8,10 @@ void test_producer_consumer(int Buffer[32], int * count) {
 	int i = 0;
 
 	while (i < 35000) {					// number of test
-
-		// PRODUCER
-		if ((rand() % 50) == 0) {		// some random computations
 #pragma omp critical
-			{
+		{
+			// PRODUCER
+			if ((rand() % 50) == 0) {		// some random computations
 				if (*count < 31) {
 					++*count;
 					std::cout << "Thread:\t" << omp_get_thread_num()
@@ -20,12 +19,9 @@ void test_producer_consumer(int Buffer[32], int * count) {
 					Buffer[*count] = omp_get_thread_num();
 				}
 			}
-		}
 
-		// CONSUMER
-		if ((std::rand() % 51) == 0) {		// some random computations
-#pragma omp critical
-			{
+			// CONSUMER
+			if ((std::rand() % 51) == 0) {		// some random computations
 				if (*count >= 1) {
 					int var = Buffer[*count];
 					std::cout << "Thread:\t" << omp_get_thread_num()
@@ -34,8 +30,8 @@ void test_producer_consumer(int Buffer[32], int * count) {
 					--*count;
 				}
 			}
+			i++;
 		}
-		i++;
 	}
 }
 

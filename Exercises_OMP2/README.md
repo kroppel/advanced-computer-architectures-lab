@@ -8,3 +8,7 @@ Parallelization of the calculation fibonacci numbers was more effective using ne
 
 ![img_fibonacci](../images/fibonacci.PNG)
 
+# Producer & Consumer
+
+To ensure that the multithreaded Producer/Consumer model is working correctly (no lost updates on the buffer or the buffer element count), accesses to the shared buffer and to the counter variable must be synchronized.
+
